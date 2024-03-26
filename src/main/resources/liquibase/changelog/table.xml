@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="TABLE_01" runOnChange="false" author="jb">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tax_forms"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE tax_forms (
+                id         SERIAL PRIMARY KEY,
+                status     VARCHAR                  NOT NULL DEFAULT 'NOT_STARTED',
+                form_year  INT                      NOT NULL,
+                form_name  VARCHAR                  NOT NULL,
+                details    JSONB,
+                created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                CHECK ( status IN (
+                                   'NOT_STARTED',
+                                   'IN_PROGRESS',
+                                   'SUBMITTED',
+                                   'RETURNED',
+                                   'ACCEPTED'
+                    ) )
+            );
+        </sql>
+        <comment>
+            Creates the tax_forms table.
+        </comment>
+    </changeSet>
+
+</databaseChangeLog>
