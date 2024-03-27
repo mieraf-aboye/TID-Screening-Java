@@ -3,6 +3,7 @@ package consulting.reason.tax_forms_api.service;
 import consulting.reason.tax_forms_api.AbstractServiceTest;
 import consulting.reason.tax_forms_api.dto.TaxFormDetailsDto;
 import consulting.reason.tax_forms_api.dto.TaxFormDto;
+import consulting.reason.tax_forms_api.dto.TaxFormHistoryDto;
 import consulting.reason.tax_forms_api.dto.request.TaxFormDetailsRequest;
 import consulting.reason.tax_forms_api.entity.TaxForm;
 import consulting.reason.tax_forms_api.enums.TaxFormStatus;
@@ -14,6 +15,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +35,7 @@ public class TaxFormServiceTest extends AbstractServiceTest {
             .comments("Testing")
             .build();
 
+    private final List<TaxFormHistoryDto> taxFormHistoryDtos = new ArrayList<>();
     @BeforeEach
     void before() {
         taxFormService = new TaxFormServiceImpl(
@@ -71,7 +75,7 @@ public class TaxFormServiceTest extends AbstractServiceTest {
         Optional<TaxFormDto> taxFormDto1 = taxFormService.save(taxForm.getId(), taxFormDetailsRequest);
         assertThat(taxFormDto1).isPresent();
         assertThat(taxFormDto1.get().getDetails()).isEqualTo(taxFormDetailsDto);
-
+        assertThat(taxFormDto1.get().getHistory()).isNotNull();
         assertThat(taxFormService.save(0, taxFormDetailsRequest)).isEmpty();
     }
 
