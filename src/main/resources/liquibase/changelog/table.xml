@@ -32,7 +32,7 @@
             CREATE TABLE tax_form_history (
                 id         SERIAL PRIMARY KEY,
                 created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                type       VARCHAR NOT NULL DEFAULT 'SUBMITTED',
+                type       VARCHAR NOT NULL,
                 tax_form_id INT NOT NULL CONSTRAINT fk_c REFERENCES tax_forms (id) ON UPDATE CASCADE ON DELETE CASCADE,
                 CHECK ( type IN (
                         'SUBMITTED',

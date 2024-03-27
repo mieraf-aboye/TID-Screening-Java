@@ -4,6 +4,7 @@ import consulting.reason.tax_forms_api.AbstractControllerTest;
 import consulting.reason.tax_forms_api.dto.TaxFormDetailsDto;
 import consulting.reason.tax_forms_api.dto.TaxFormDto;
 import consulting.reason.tax_forms_api.dto.request.TaxFormDetailsRequest;
+import consulting.reason.tax_forms_api.enums.TaxFormStatus;
 import consulting.reason.tax_forms_api.service.TaxFormService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -138,4 +138,16 @@ public class TaxFormControllerTest extends AbstractControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void testSubmit() throws Exception {
+        taxFormDto.setStatus(TaxFormStatus.IN_PROGRESS);
+        given(taxFormService.submit(taxFormDto.getId())).willReturn(taxFormDto);
+
+        mockMvc.perform(post(Endpoints.FORMS + "/submit/" + taxFormDto.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(taxFormDto)));
+    }
+
 }

@@ -10,6 +10,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -37,6 +38,6 @@ public class TaxForm {
     private ZonedDateTime createdAt;
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
-    @OneToMany(mappedBy="id")
+    @OneToMany(mappedBy="id", fetch = FetchType.EAGER)
     private List<TaxFormHistory> history;
 }

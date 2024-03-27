@@ -96,4 +96,13 @@ public class TaxFormServiceTest extends AbstractServiceTest {
                 .isInstanceOf(TaxFormStatusException.class)
                 .hasMessage(taxFormStatusException.getMessage());
     }
+
+    @Test
+    void testSubmit() {
+        taxForm.setStatus(TaxFormStatus.IN_PROGRESS);
+        TaxFormDto taxFormDto1 = taxFormService.submit(taxForm.getId());
+        assertThat(taxFormDto1).isNotNull();
+        assertThat(taxFormDto1.getStatus()).isEqualTo(TaxFormStatus.SUBMITTED);
+        assertThat(taxFormDto1.getHistory().size()).isEqualTo(1);
+    }
 }

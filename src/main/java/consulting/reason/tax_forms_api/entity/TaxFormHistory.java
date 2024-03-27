@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tax_forms")
+@Table(name = "tax_form_history")
 @Entity
 public class TaxFormHistory {
     @Id
@@ -25,5 +25,6 @@ public class TaxFormHistory {
     private Integer id;
     @CreationTimestamp
     private ZonedDateTime createdAt;
+    @Column(name="type")
     private TaxFormHistoryType type;
 }

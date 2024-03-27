@@ -34,4 +34,9 @@ public class TaxFormController {
         return taxFormService.save(id, taxFormDetailsRequest)
                 .orElseThrow(() -> new TaxFormNotFoundException(id));
     }
+
+    @PostMapping("/submit/{id}")
+    public TaxFormDto submit(@PathVariable Integer id) {
+        return taxFormService.submit(id);
+    }
 }

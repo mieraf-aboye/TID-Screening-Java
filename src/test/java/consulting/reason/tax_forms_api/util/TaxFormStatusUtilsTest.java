@@ -4,6 +4,7 @@ import consulting.reason.tax_forms_api.entity.TaxForm;
 import consulting.reason.tax_forms_api.enums.TaxFormStatus;
 import consulting.reason.tax_forms_api.exception.TaxFormStatusException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -47,6 +48,30 @@ public class TaxFormStatusUtilsTest {
         );
 
         assertThatThrownBy(() -> TaxFormStatusUtils.save(taxForm))
+                .isInstanceOf(TaxFormStatusException.class)
+                .hasMessage(taxFormStatusException.getMessage());
+    }
+
+    @Test
+    void testSubmitPermitted() {
+        taxForm.setStatus(TaxFormStatus.IN_PROGRESS);
+        TaxFormStatusUtils.submit(taxForm);
+        assertThat(taxForm.getStatus()).isEqualTo(TaxFormStatus.SUBMITTED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = TaxFormStatus.class, names = {
+            "SUBMITTED",
+            "ACCEPTED"
+    })
+    void testSubmitNotPermitted(TaxFormStatus taxFormStatus) {
+        taxForm.setStatus(taxFormStatus);
+        TaxFormStatusException taxFormStatusException = new TaxFormStatusException(
+                taxForm,
+                TaxFormStatus.IN_PROGRESS
+        );
+
+        assertThatThrownBy(() -> TaxFormStatusUtils.submit(taxForm))
                 .isInstanceOf(TaxFormStatusException.class)
                 .hasMessage(taxFormStatusException.getMessage());
     }
