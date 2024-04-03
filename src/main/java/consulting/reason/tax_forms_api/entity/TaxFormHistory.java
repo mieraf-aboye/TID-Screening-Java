@@ -1,14 +1,10 @@
 package consulting.reason.tax_forms_api.entity;
 
-import consulting.reason.tax_forms_api.dto.TaxFormDetailsDto;
 import consulting.reason.tax_forms_api.enums.TaxFormHistoryType;
-import consulting.reason.tax_forms_api.enums.TaxFormStatus;
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.ZonedDateTime;
 
@@ -25,6 +21,10 @@ public class TaxFormHistory {
     private Integer id;
     @CreationTimestamp
     private ZonedDateTime createdAt;
-    @Column(name="type")
+    @Enumerated(value = EnumType.STRING)
+    @Column(name="type", nullable = false)
     private TaxFormHistoryType type;
+    @ManyToOne
+    @JoinColumn(name="tax_form_id", nullable=false)
+    private TaxForm taxForm;
 }

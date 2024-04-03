@@ -38,6 +38,6 @@ public class TaxForm {
     private ZonedDateTime createdAt;
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
-    @OneToMany(mappedBy="id", fetch = FetchType.EAGER)
-    private List<TaxFormHistory> history;
+    @OneToMany(mappedBy="taxForm")
+    private List<TaxFormHistory> taxFormHistories;
 }

@@ -6,6 +6,8 @@ import consulting.reason.tax_forms_api.dto.request.TaxFormDetailsRequest;
 import consulting.reason.tax_forms_api.entity.TaxForm;
 import consulting.reason.tax_forms_api.entity.TaxFormHistory;
 import consulting.reason.tax_forms_api.exception.TaxFormNotFoundException;
+import consulting.reason.tax_forms_api.exception.TaxFormStatusException;
+import consulting.reason.tax_forms_api.repository.TaxFormHistoryRepository;
 import consulting.reason.tax_forms_api.repository.TaxFormRepository;
 import consulting.reason.tax_forms_api.util.TaxFormHistoryTypeUtils;
 import consulting.reason.tax_forms_api.util.TaxFormStatusUtils;
@@ -13,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +22,15 @@ import java.util.Optional;
 public class TaxFormServiceImpl implements TaxFormService {
     private final TaxFormRepository taxFormRepository;
 
+    private final TaxFormHistoryRepository taxFormHistoryRepository;
+
     private final ModelMapper modelMapper;
 
     public TaxFormServiceImpl(TaxFormRepository taxFormRepository,
+                              TaxFormHistoryRepository taxFormHistoryRepository,
                               ModelMapper modelMapper) {
         this.taxFormRepository = taxFormRepository;
+        this.taxFormHistoryRepository = taxFormHistoryRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -60,15 +65,15 @@ public class TaxFormServiceImpl implements TaxFormService {
 
     @Override
     @Transactional()
-    public TaxFormDto submit(Integer id) {
+    public TaxFormDto submit(Integer id) throws TaxFormNotFoundException, TaxFormStatusException {
         TaxForm taxForm = taxFormRepository.findById(id).orElseThrow(() -> new TaxFormNotFoundException(id));
         TaxFormStatusUtils.submit(taxForm);
+
         TaxFormHistory taxFormHistory = new TaxFormHistory();
         TaxFormHistoryTypeUtils.save(taxFormHistory);
-        if (taxForm.getHistory() == null) {
-            taxForm.setHistory(new ArrayList<>());
-        }
-        taxForm.getHistory().add(taxFormHistory);
+        taxFormHistory.setTaxForm(taxForm);
+        taxFormHistoryRepository.save(taxFormHistory);
+
         return modelMapper.map(taxFormRepository.save(taxForm), TaxFormDto.class);
     }
 }

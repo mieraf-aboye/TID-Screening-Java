@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,10 +36,7 @@ public class ModelMapperConfig {
 
         modelMapper.typeMap(TaxForm.class, TaxFormDto.class).setConverter(context -> {
             TaxForm taxForm = context.getSource();
-            List<TaxFormHistoryDto> taxFormHistoryDtos = new ArrayList<>();
-            if(taxForm.getHistory() != null) {
-                taxFormHistoryDtos = taxForm.getHistory().stream().map(tfh -> modelMapper.map(tfh, TaxFormHistoryDto.class)).collect(Collectors.toList());
-            }
+            List<TaxFormHistoryDto> taxFormHistoryDtos = taxForm.getTaxFormHistories() == null ? new ArrayList<>() : taxForm.getTaxFormHistories().stream().map(history -> modelMapper.map(history, TaxFormHistoryDto.class)).toList();
             return TaxFormDto.builder()
                     .id(taxForm.getId())
                     .formYear(taxForm.getFormYear())

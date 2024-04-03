@@ -2,7 +2,9 @@ package consulting.reason.tax_forms_api.controller;
 
 import consulting.reason.tax_forms_api.dto.TaxFormDto;
 import consulting.reason.tax_forms_api.dto.request.TaxFormDetailsRequest;
+import consulting.reason.tax_forms_api.exception.TaxFormHistoryTypeException;
 import consulting.reason.tax_forms_api.exception.TaxFormNotFoundException;
+import consulting.reason.tax_forms_api.exception.TaxFormStatusException;
 import consulting.reason.tax_forms_api.service.TaxFormService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +38,7 @@ public class TaxFormController {
     }
 
     @PostMapping("/submit/{id}")
-    public TaxFormDto submit(@PathVariable Integer id) {
+    public TaxFormDto submit(@PathVariable Integer id) throws TaxFormNotFoundException, TaxFormStatusException {
         return taxFormService.submit(id);
     }
 }

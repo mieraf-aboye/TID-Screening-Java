@@ -106,10 +106,17 @@ public class TaxFormControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testSaveWithBadAppraisedValueShouldFail() throws Exception {
+        taxFormDetailsRequest.setAssessedValue(null);
+        mockMvc.perform(patch(Endpoints.FORMS + "/" + taxFormDto.getId())
+                        .content(objectMapper.writeValueAsString(taxFormDetailsRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testSaveWithBadRatioShouldFail() throws Exception {
         taxFormDetailsRequest.setRatio(1.1);
-        given(taxFormService.save(taxFormDto.getId(), taxFormDetailsRequest)).willReturn(Optional.of(taxFormDto));
-
         mockMvc.perform(patch(Endpoints.FORMS + "/" + taxFormDto.getId())
                         .content(objectMapper.writeValueAsString(taxFormDetailsRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -119,8 +126,6 @@ public class TaxFormControllerTest extends AbstractControllerTest {
     @Test
     void testSaveWithBadAssessedValueShouldFail() throws Exception {
         taxFormDetailsRequest.setAssessedValue(100001);
-        given(taxFormService.save(taxFormDto.getId(), taxFormDetailsRequest)).willReturn(Optional.of(taxFormDto));
-
         mockMvc.perform(patch(Endpoints.FORMS + "/" + taxFormDto.getId())
                         .content(objectMapper.writeValueAsString(taxFormDetailsRequest))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -131,7 +136,6 @@ public class TaxFormControllerTest extends AbstractControllerTest {
     void testSaveWithBadCommentsFail() throws Exception {
         String badComment = new String(new char[501]).replace('\0', ' ');
         taxFormDetailsRequest.setComments(badComment);
-        given(taxFormService.save(taxFormDto.getId(), taxFormDetailsRequest)).willReturn(Optional.of(taxFormDto));
 
         mockMvc.perform(patch(Endpoints.FORMS + "/" + taxFormDto.getId())
                         .content(objectMapper.writeValueAsString(taxFormDetailsRequest))
